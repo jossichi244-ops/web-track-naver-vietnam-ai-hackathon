@@ -1,0 +1,222 @@
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background-color: #022b17;
+  border: 1px solid #0ecf81;
+  box-shadow: 0 4px 12px rgba(14, 207, 129, 0.1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(14, 207, 129, 0.25);
+  }
+
+  &.completed {
+    background-color: #011f0f;
+    border-color: #0d3822;
+    .task-title {
+      color: #6a8c79;
+      text-decoration: line-through;
+    }
+  }
+}
+
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-grow: 1;
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  cursor: pointer;
+  appearance: none;
+  border-radius: 4px;
+  border: 2px solid #a4f9d6;
+  position: relative;
+  transition: all 0.2s ease;
+
+  &:checked {
+    background-color: #0ecf81;
+    border-color: #0ecf81;
+
+    &::after {
+      content: "✔";
+      color: #011f0f;
+      font-size: 1rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.task-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.task-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.task-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #a4f9d6;
+  word-break: break-word;
+}
+
+.task-priority {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  &.priority-high {
+    background-color: #f44336;
+    color: white;
+  }
+  &.priority-medium {
+    background-color: #ff9800;
+    color: #333;
+  }
+  &.priority-low {
+    background-color: #2196f3;
+    color: white;
+  }
+}
+
+.task-tags {
+  font-size: 0.8rem;
+  color: #7ee8b3;
+}
+
+.task-due-date {
+  font-size: 0.75rem;
+  color: #999;
+  font-style: italic;
+}
+
+.task-description {
+  font-size: 0.9rem;
+  color: #c9d1d9;
+  margin-top: 0.5rem;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.action-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  .icon {
+    font-size: 1rem;
+  }
+  &.mark-done {
+    background-color: #0ecf81;
+    color: white;
+    &:hover {
+      background-color: darken(#0ecf81, 10%);
+    }
+  }
+  &.delete {
+    background-color: #240202;
+    color: white;
+    &:hover {
+      background-color: darken(#dc3545, 10%);
+    }
+  }
+}
+.task-comments-section {
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #044b25;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #0ecf81;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
+
+.comment {
+  padding: 0.5rem;
+  border-bottom: 1px solid #0d3822;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  &:last-child {
+    border-bottom: none;
+  }
+} /* From Uiverse.io by philipo30 */
+.delete-button {
+  position: relative;
+  padding: 0.5em;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1em;
+  transition: transform 0.2s ease;
+}
+
+.trash-svg {
+  width: 2em;
+  height: 2em;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  overflow: visible;
+}
+
+#lid-group {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.delete-button:hover #lid-group {
+  transform: rotate(-28deg) translateY(2px);
+}
+
+.delete-button:active #lid-group {
+  transform: rotate(-12deg) scale(0.98);
+}
+
+.delete-button:hover .trash-svg {
+  transform: scale(1.08) rotate(3deg);
+}
+
+.delete-button:active .trash-svg {
+  transform: scale(0.96) rotate(-1deg);
+}

@@ -1,0 +1,120 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: #0d1117;
+  border: 1px solid #2f363d;
+  border-radius: 12px;
+  box-shadow: 0 4px 60px rgba(0, 255, 127, 0.1),
+    0 0 10px rgba(0, 255, 127, 0.05);
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  color: #c9d1d9;
+  text-align: center;
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #a4f9d6;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 5px rgba(164, 249, 214, 0.5);
+  }
+}
+
+.message {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  &.success {
+    background-color: rgba(0, 255, 127, 0.1);
+    color: #00ff7f;
+    border: 1px solid #00ff7f;
+  }
+
+  &.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  input {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background-color: #161b22;
+    color: #c9d1d9;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #a4f9d6;
+      box-shadow: 0 0 0 3px rgba(164, 249, 214, 0.2);
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    &[type="button"] {
+      // Cancel button
+      background-color: #21262d;
+      color: #7d8590;
+      border: 1px solid #30363d;
+      &:hover:not(:disabled) {
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    &[type="submit"] {
+      // Submit button
+      background-color: #0ecf81;
+      color: #011f0f;
+      &:hover:not(:disabled) {
+        box-shadow: 0 4px 10px rgba(14, 207, 129, 0.3);
+      }
+    }
+  }
+}

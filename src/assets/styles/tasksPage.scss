@@ -1,0 +1,214 @@
+/* General Styles & Animations */
+:root {
+  --color-bg-dark: #011f0f;
+  --color-panel-dark: #022b17;
+  --color-border: #0ecf81;
+  --color-text-primary: #a4f9d6;
+  --color-text-secondary: #7ee8b3;
+  --color-accent: #0ecf81;
+  --color-accent-hover: #15e8a3;
+  --color-glow: rgba(14, 207, 129, 0.7);
+  --color-error: #f44336;
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "Inter", sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--color-glow);
+  }
+}
+
+body {
+  background-color: var(--color-bg-dark);
+}
+
+/* Page Layout */
+.tasks-page-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.tasks-page-unauth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--color-bg-dark);
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Task Form Panel (Left) */
+.task-form-panel {
+  background: var(--color-panel-dark);
+  border-right: 2px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+  animation: slideInUp 0.6s ease-out;
+
+  .task-form-wrapper {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+/* Tasks List Panel (Right) */
+.tasks-list-panel {
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 1s ease-in-out;
+
+  .tasks-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg-dark);
+    z-index: 10;
+  }
+
+  .header-title {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+}
+
+.tasks-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 1rem;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: 4px;
+    opacity: 0.5;
+  }
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Status & Buttons */
+.status-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  &.loading {
+    color: var(--color-accent);
+  }
+  &.error {
+    color: var(--color-error);
+    font-weight: 700;
+  }
+}
+
+.reload-btn-container {
+  display: flex;
+  justify-content: center;
+  .reload-button {
+    background: var(--color-accent);
+    border: none;
+    border-radius: 12px;
+    padding: 0.7rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--color-bg-dark);
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--color-glow);
+    transition: all 0.3s ease;
+    &:hover {
+      transform: translateY(-2px);
+      background: var(--color-accent-hover);
+      box-shadow: 0 0 25px var(--color-glow);
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .tasks-page-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow-y: auto;
+    .task-form-panel {
+      border-right: none;
+      border-bottom: 2px solid var(--color-border);
+    }
+    .tasks-list-panel {
+      padding: 2rem 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tasks-page-container {
+    padding: 1rem;
+  }
+
+  .tasks-list-panel {
+    padding: 1.5rem 1rem;
+    .header-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  .reload-btn-container .reload-button {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+}

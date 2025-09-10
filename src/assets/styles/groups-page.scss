@@ -1,0 +1,167 @@
+:root {
+  --color-dark-bg: #0d0d21;
+  --color-panel-bg: #151530;
+  --color-border-subtle: #2a2a5a;
+  --color-text-primary: #e0e0f0;
+  --color-text-secondary: #8c8cbe;
+  /* Naver primary green (Clova / UI) */
+  --color-accent-primary: #05d686;
+  /* Biến thể tối hơn cho hover/button */
+  --color-accent-dark: #03cf5d;
+  /* Neon-style nhẹ nhàng */
+  --color-accent-glow: rgba(5, 214, 134, 0.2);
+  /* Nút nền */
+  --color-button-bg: #03c75a;
+
+  --font-family-sans: "Inter", sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --border-radius-card: 12px;
+  --transition-fast: all 0.3s ease-in-out;
+}
+
+// ----------------------------------------------------
+// Keyframes cho các hiệu ứng
+// ----------------------------------------------------
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px var(--color-accent-glow),
+      0 0 10px var(--color-accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 10px var(--color-accent-glow),
+      0 0 20px var(--color-accent-glow);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--color-accent-glow),
+      0 0 10px var(--color-accent-glow);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spinner-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ----------------------------------------------------
+// Trang chính
+// ----------------------------------------------------
+.groups-page-container {
+  background-color: var(--color-dark-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  padding: 4rem;
+  font-family: var(--font-family-sans);
+  animation: fadeIn 0.8s ease-out;
+
+  .main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-accent-neon);
+    text-shadow: 0 0 15px var(--color-accent-glow);
+    animation: pulse-glow 2s infinite alternate;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+
+    .create-group-section,
+    .groups-list-section {
+      background-color: var(--color-panel-bg);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--border-radius-card);
+      padding: 2.5rem;
+      transition: var(--transition-fast);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    // .create-group-section {
+    //   // No specific overrides for now, but good to have a class
+    // }
+
+    // .groups-list-section {
+    //   // No specific overrides for now
+    // }
+  }
+}
+
+// ----------------------------------------------------
+// Phần tạo nhóm
+// ----------------------------------------------------
+.card-header {
+  margin-bottom: 1.5rem;
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+
+    .icon-plus {
+      font-size: 1.2rem;
+      color: var(--color-accent-neon);
+      margin-left: 0.5rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+// ----------------------------------------------------
+// Trạng thái Loading và rỗng
+// ----------------------------------------------------
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-secondary);
+  text-align: center;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-text-secondary);
+    border-top-color: var(--color-accent-neon);
+    border-radius: 50%;
+    animation: spinner-spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+.empty-state {
+  font-size: 1rem;
+  font-style: italic;
+}
+
+// ----------------------------------------------------
+// Danh sách nhóm
+// ----------------------------------------------------
+.group-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

@@ -1,0 +1,169 @@
+// src/assets/styles/_group-form.scss
+
+// Naver-inspired Web3 color palette
+$naver-green: #03c75a;
+$naver-dark-green: #029443;
+$naver-gray: #f0f0f6;
+$naver-light-gray: #a4a4b2;
+$naver-text: #202022;
+
+// Web3-specific variables
+$color-dark-bg: #0a0a1a;
+$color-panel-bg: #151530;
+$color-border-subtle: #2a2a5a;
+$color-text-primary: #e0e0f0;
+$color-text-secondary: #8c8cbe;
+$color-accent-neon: #a020f0; // Neon purple
+$color-accent-glow: rgba(160, 32, 240, 0.6);
+$color-input-bg: #1c1c3c;
+$color-button-hover: #048b3b;
+
+// Fonts
+$font-family-sans: "Inter", sans-serif;
+$font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+// Transitions
+$transition-fast: all 0.3s ease-in-out;
+$transition-slow: all 0.5s ease;
+
+// Keyframes for subtle animations
+@keyframes glow-pulse {
+  from {
+    box-shadow: 0 0 5px $naver-green;
+  }
+  to {
+    box-shadow: 0 0 10px $naver-green;
+  }
+}
+
+@keyframes input-border-glow {
+  from {
+    border-color: $color-border-subtle;
+  }
+  to {
+    border-color: $naver-green;
+  }
+}
+
+.group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: $font-family-sans;
+  background-color: $color-panel-bg;
+  border: 1px solid $color-border-subtle;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: $transition-slow;
+
+  &:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &.form-field-inline {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .field-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-input,
+  .field-textarea,
+  .field-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: $color-input-bg;
+    border: 1px solid $color-border-subtle;
+    border-radius: 8px;
+    color: $color-text-primary;
+    font-family: $font-family-mono;
+    transition: $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $naver-green;
+      box-shadow: 0 0 0 3px rgba($naver-green, 0.3);
+    }
+  }
+
+  .field-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .field-select {
+    appearance: none; // Ẩn mũi tên mặc định
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%238c8cbe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+
+  // Custom checkbox style
+  input[type="checkbox"] {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid $color-border-subtle;
+    border-radius: 6px;
+    background-color: $color-input-bg;
+    cursor: pointer;
+    position: relative;
+    transition: $transition-fast;
+
+    &:checked {
+      background-color: $naver-green;
+      border-color: $naver-green;
+    }
+
+    &:checked::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: $naver-text;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .form-submit-button {
+    background-color: $naver-green;
+    color: $color-dark-bg;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px; // Pill shape
+    border: none;
+    cursor: pointer;
+    transition: $transition-fast;
+    box-shadow: 0 0 5px $naver-green;
+
+    &:hover {
+      background-color: $naver-dark-green;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px $naver-green, 0 0 30px $naver-green;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}

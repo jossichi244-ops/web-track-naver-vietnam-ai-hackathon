@@ -1,0 +1,207 @@
+/*
+  ==============================================================
+  SCSS cho Popup Thành Viên: Lấy cảm hứng từ giao diện Web3 cao cấp.
+  Thiết kế này sử dụng các kỹ thuật tiên tiến để tạo hiệu ứng 3D,
+  ánh sáng và chuyển động mượt mà, thể hiện sự tinh tế và quyền lực.
+  ==============================================================
+*/
+
+// --- 1. Biến (Variables) ---
+// Định nghĩa các biến để dễ dàng thay đổi theme
+$primary-color: #00ffc0; // Ánh sáng neon xanh lá cây
+$secondary-color: #4a90e2; // Màu xanh dương điện tử
+$background-color: #0d1a2d; // Nền xanh đen sâu thẳm
+$border-color: rgba(0, 255, 192, 0.2); // Viền mờ lấp lánh
+$text-color: #ffffff; // Chữ trắng sáng
+$shadow-color: rgba(0, 255, 192, 0.4); // Bóng đổ xanh neon
+
+// --- 2. Mixin (Hàm tái sử dụng) ---
+// Mixin cho hiệu ứng bóng đổ và ánh sáng ngoài viền
+@mixin glow-effect($color) {
+  box-shadow: 0 0 10px $color, 0 0 20px $color, 0 0 30px $color,
+    0 0 40px $color inset;
+}
+
+// Mixin cho hiệu ứng chuyển động mượt mà
+@mixin transition-ease {
+  transition: all 0.3s ease-in-out;
+}
+
+// --- 3. Keyframes (Animation) ---
+// Animation cho hiệu ứng ánh sáng nhấp nháy
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px $shadow-color;
+  }
+  50% {
+    box-shadow: 0 0 15px $shadow-color, 0 0 25px $shadow-color;
+  }
+}
+
+// Animation cho popup xuất hiện
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(10%, 10%) scale(1);
+  }
+}
+
+// --- 4. Cấu Trúc SCSS Chi Tiết ---
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); // Nền tối trong suốt
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px); // Hiệu ứng làm mờ nền
+  z-index: 1000; // Đảm bảo popup ở trên cùng
+}
+
+.popup-content {
+  background: $background-color;
+  border: 1px solid $border-color;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+
+  @include transition-ease;
+  animation: popup-fade-in 0.5s forwards; // Áp dụng animation khi xuất hiện
+
+  h2 {
+    color: $primary-color;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 5px $primary-color; // Ánh sáng nhẹ cho tiêu đề
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      &:last-child {
+        border-bottom: none; // Bỏ viền dưới cho item cuối cùng
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        padding-left: 10px; // Hiệu ứng trượt nhẹ
+        padding-right: 10px;
+        transform: translateY(-2px);
+        @include transition-ease;
+      }
+    }
+  }
+
+  // Styles cho select box
+  select {
+    background: $background-color;
+    color: $primary-color;
+    border: 1px solid $border-color;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-family: "Consolas", "Courier New", monospace; // Font code
+    appearance: none; // Ẩn mũi tên mặc định
+    cursor: pointer;
+
+    @include transition-ease;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      @include glow-effect($primary-color);
+    }
+
+    // Hiệu ứng "mũi tên" giả bằng CSS
+    &::after {
+      content: "▼";
+      font-size: 0.8em;
+      color: $primary-color;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    option {
+      background: $background-color;
+      color: $text-color;
+    }
+  }
+
+  strong {
+    color: $secondary-color;
+    text-shadow: 0 0 5px $secondary-color;
+  }
+
+  .close-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: transparent;
+    border: 2px solid $primary-color;
+    color: $primary-color;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        transparent 40%,
+        $primary-color 50%,
+        transparent 60%
+      );
+      transform: translateX(-100%);
+      transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+      z-index: -1;
+    }
+
+    &:hover::before {
+      transform: translateX(0);
+    }
+
+    &:hover {
+      color: $background-color; // Chữ đổi màu khi hover
+      @include glow-effect($primary-color);
+    }
+  }
+}

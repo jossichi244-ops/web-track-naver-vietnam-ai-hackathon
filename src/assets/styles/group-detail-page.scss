@@ -1,0 +1,290 @@
+// src/assets/styles/_group-detail-page.scss
+
+// Variables
+:root {
+  --color-dark-bg: #0d0d21;
+  --color-panel-bg: #151530;
+  --color-border-subtle: #2a2a5a;
+  --color-text-primary: #e0e0f0;
+  --color-text-secondary: #8c8cbe;
+  --color-accent-neon: #a020f0; // Neon purple
+  --color-accent-glow: rgba(160, 32, 240, 0.6);
+  --color-button-bg: #3c2a6d;
+  --color-red: #ef4444;
+  --color-green: #22c55e;
+
+  --font-family-sans: "Inter", sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --border-radius-card: 12px;
+  --transition-fast: all 0.3s ease-in-out;
+}
+
+// Keyframes
+@keyframes pulse-glow {
+  from {
+    box-shadow: 0 0 5px var(--color-accent-glow);
+  }
+  to {
+    box-shadow: 0 0 10px var(--color-accent-glow);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Global container
+.group-detail-container {
+  background-color: var(--color-dark-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  padding: 4rem;
+  font-family: var(--font-family-sans);
+  animation: fadeIn 0.8s ease-out;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-state {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  padding-top: 5rem;
+}
+
+// Header Section
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+
+  .group-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .status-badges {
+    display: flex;
+    gap: 1rem;
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .owner-badge {
+      background-color: var(--color-accent-neon);
+      color: var(--color-text-primary);
+    }
+    .public-badge {
+      background-color: var(--color-green);
+      color: #fff;
+    }
+    .private-badge {
+      background-color: var(--color-red);
+      color: #fff;
+    }
+  }
+}
+
+// Info & Description Grid
+.info-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  .info-card,
+  .description-card {
+    background-color: var(--color-panel-bg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-card);
+    padding: 2rem;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-card {
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        color: var(--color-text-secondary);
+      }
+      .info-value {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .address-value {
+        font-family: var(--font-family-mono);
+        color: var(--color-accent-neon);
+      }
+    }
+  }
+
+  .description-card {
+    .description-text {
+      line-height: 1.6;
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+// Action Section (Owner/Visitor)
+.action-section {
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-primary);
+  }
+
+  .owner-actions,
+  .visitor-actions {
+    background-color: var(--color-panel-bg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-card);
+    padding: 2rem;
+  }
+
+  .delete-button {
+    background-color: var(--color-red);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    transition: var(--transition-fast);
+
+    &:hover {
+      //   background-color: darken($color: var(--color-red), $amount: 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(239, 68, 68, 0.2);
+    }
+  }
+
+  .join-button,
+  .joined-button {
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+
+  .join-button {
+    background-color: var(--color-accent-neon);
+    color: var(--color-text-primary);
+    box-shadow: 0 0 10px rgba(160, 32, 240, 0.3);
+
+    &:hover {
+      //   background-color: darken($color: var(--color-accent-neon), $amount: 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--color-accent-glow),
+        0 0 30px var(--color-accent-glow);
+    }
+    &.disabled {
+      background-color: var(--color-border-subtle);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  .joined-button {
+    background-color: var(--color-green);
+    color: #fff;
+    cursor: not-allowed;
+  }
+}
+/* From Uiverse.io by alexmaracinaru */
+.cta {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cta span {
+  padding-bottom: 7px;
+  letter-spacing: 4px;
+  font-size: 14px;
+  padding-right: 15px;
+  text-transform: uppercase;
+}
+
+.cta svg {
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+}
+
+.cta:hover svg {
+  transform: translateX(0);
+}
+
+.cta:active svg {
+  transform: scale(0.9);
+}
+
+.hover-underline-animation {
+  position: relative;
+  color: var(--color-text-primary);
+  padding-bottom: 20px;
+}
+
+.hover-underline-animation:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-accent-glow);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.cta:hover .hover-underline-animation:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}

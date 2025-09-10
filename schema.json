@@ -1,0 +1,1450 @@
+[
+  {
+    "_id": "collection_auth_challenges",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "AuthChallenge",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "user_id": { "type": "string", "index": true },
+            "wallet_address": { "type": "string", "index": true },
+            "challenge": {
+              "type": "string",
+              "description": "Chuỗi ngẫu nhiên để ký"
+            },
+            "expires_at": { "type": "string", "format": "date-time" },
+            "used": { "type": "boolean", "default": false },
+            "created_at": { "type": "string", "format": "date-time" }
+          },
+          "required": [
+            "_id",
+            "wallet_address",
+            "challenge",
+            "expires_at",
+            "created_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "chal_abc123",
+            "user_id": "user_farm_001",
+            "wallet_address": "0x123abc...",
+            "challenge": "nonce_7d8f9e0a1b2c",
+            "expires_at": "2025-08-15T15:00:00Z",
+            "used": false,
+            "created_at": "2025-08-15T14:30:00Z"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "challenge": {
+                    "$function": {
+                      "body": "function() { return 'nonce_' + require('crypto').randomBytes(12).toString('hex'); }",
+                      "args": [],
+                      "lang": "js"
+                    }
+                  },
+                  "expires_at": {
+                    "$dateAdd": {
+                      "startDate": "$$NOW",
+                      "unit": "minute",
+                      "amount": 5
+                    }
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_auth_challenges",
+                  "on": "wallet_address",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo thử thách đăng nhập (nonce) cho người dùng khi request /auth/challenge."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_users",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "User",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "wallet_address": {
+              "type": "string",
+              "index": true,
+              "unique": true
+            },
+            "display_name": {
+              "type": "string",
+              "maxLength": 50,
+              "description": "Có thể để trống → mặc định là short address (0x123...abc)"
+            },
+            "avatar_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Có thể là URL ENS avatar, Blockie, hoặc upload"
+            },
+            "created_at": { "type": "string", "format": "date-time" },
+            "last_login": { "type": "string", "format": "date-time" },
+            "preferences": {
+              "type": "object",
+              "properties": {
+                "theme": {
+                  "type": "string",
+                  "enum": ["light", "dark", "auto"],
+                  "default": "light"
+                },
+                "notifications": { "type": "boolean", "default": true },
+                "web_push_enabled": { "type": "boolean", "default": true },
+                "language": { "type": "string", "default": "vi" }
+              },
+              "required": ["theme", "notifications", "web_push_enabled"]
+            },
+            "profile_summary": {
+              "type": "object",
+              "properties": {
+                "total_tasks": { "type": "number", "default": 0 },
+                "completed_tasks": { "type": "number", "default": 0 },
+                "in_progress_tasks": { "type": "number", "default": 0 },
+                "pending_tasks": { "type": "number", "default": 0 },
+                "productivity_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Điểm năng suất: (tỷ lệ hoàn thành * 50) + (tỷ lệ đúng hạn * 50)"
+                },
+                "last_updated_summary": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "total_tasks",
+                "completed_tasks",
+                "productivity_score",
+                "last_updated_summary"
+              ]
+            },
+            "skill_tag": { "type": "string", "index": true },
+            "proficiency_level": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "last_used_at": { "type": "string", "format": "date-time" },
+            "verified_by_tasks": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "endorsed_by": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": ["_id", "wallet_address", "created_at"]
+        },
+        "jsonSample": [
+          {
+            "_id": "user_789xyz",
+            "wallet_address": "0x123abc...",
+            "display_name": "Alice in Web3",
+            "avatar_url": "https://example.com/avatars/alice.png",
+            "created_at": "2025-08-15T14:35:00Z",
+            "last_login": "2025-08-15T14:35:00Z",
+            "preferences": {
+              "theme": "dark",
+              "notifications": true,
+              "web_push_enabled": false,
+              "language": "vi"
+            },
+            "profile_summary": {
+              "total_tasks": 25,
+              "completed_tasks": 20,
+              "in_progress_tasks": 3,
+              "pending_tasks": 2,
+              "productivity_score": 86,
+              "last_updated_summary": "2025-09-10T14:30:00Z"
+            }
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": { "$literal": "$$NOW" },
+                  "last_login": { "$literal": "$$NOW" },
+                  "preferences": {
+                    "$literal": {
+                      "theme": "light",
+                      "notifications": true,
+                      "web_push_enabled": true,
+                      "language": "vi"
+                    }
+                  },
+                  "profile_summary": {
+                    "$literal": {
+                      "total_tasks": 0,
+                      "completed_tasks": 0,
+                      "in_progress_tasks": 0,
+                      "pending_tasks": 0,
+                      "productivity_score": 0,
+                      "last_updated_summary": "$$NOW"
+                    }
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_users",
+                  "on": "wallet_address",
+                  "whenMatched": "merge",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo hoặc cập nhật hồ sơ người dùng sau khi xác thực thành công."
+          },
+          {
+            "pipeline": [
+              {
+                "$match": {
+                  "$or": [
+                    {
+                      "status": {
+                        "$in": ["completed", "in_progress", "pending"]
+                      }
+                    },
+                    { "user_id": { "$ne": null } }
+                  ]
+                }
+              },
+              {
+                "$group": {
+                  "_id": "$user_id",
+                  "total_tasks": { "$sum": 1 },
+                  "completed_tasks": {
+                    "$sum": {
+                      "$cond": [{ "$eq": ["$status", "completed"] }, 1, 0]
+                    }
+                  },
+                  "in_progress_tasks": {
+                    "$sum": {
+                      "$cond": [{ "$eq": ["$status", "in_progress"] }, 1, 0]
+                    }
+                  },
+                  "pending_tasks": {
+                    "$sum": {
+                      "$cond": [{ "$eq": ["$status", "pending"] }, 1, 0]
+                    }
+                  },
+                  "on_time_tasks": {
+                    "$sum": {
+                      "$cond": [
+                        {
+                          "$and": [
+                            { "$eq": ["$status", "completed"] },
+                            { "$lte": ["$completed_at", "$due_date"] }
+                          ]
+                        },
+                        1,
+                        0
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "$addFields": {
+                  "productivity_score": {
+                    "$add": [
+                      {
+                        "$multiply": [
+                          {
+                            "$divide": [
+                              "$completed_tasks",
+                              { "$max": ["$total_tasks", 1] }
+                            ]
+                          },
+                          50
+                        ]
+                      },
+                      {
+                        "$multiply": [
+                          {
+                            "$divide": [
+                              "$on_time_tasks",
+                              { "$max": ["$completed_tasks", 1] }
+                            ]
+                          },
+                          50
+                        ]
+                      }
+                    ]
+                  },
+                  "last_updated_summary": "$$NOW"
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_users",
+                  "on": "_id",
+                  "whenMatched": [
+                    {
+                      "$addFields": {
+                        "profile_summary.total_tasks": "$total_tasks",
+                        "profile_summary.completed_tasks": "$completed_tasks",
+                        "profile_summary.in_progress_tasks": "$in_progress_tasks",
+                        "profile_summary.pending_tasks": "$pending_tasks",
+                        "profile_summary.productivity_score": "$productivity_score",
+                        "profile_summary.last_updated_summary": "$last_updated_summary"
+                      }
+                    }
+                  ],
+                  "whenNotMatched": "discard"
+                }
+              }
+            ],
+            "purpose": "afterUpsert on collection_tasks"
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_tasks",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Task",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "user_id": { "type": ["string", "null"], "index": true },
+            "wallet_address": { "type": ["string", "null"], "index": true },
+            "group_id": { "type": ["string", "null"], "index": true },
+            "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "description": { "type": "string", "maxLength": 1000 },
+            "status": {
+              "type": "string",
+              "enum": ["pending", "in_progress", "completed", "archived"],
+              "default": "pending"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["low", "medium", "high"],
+              "default": "medium"
+            },
+            "tags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1,
+              "maxItems": 5
+            },
+            "is_completed": { "type": "boolean", "default": false },
+            "color_code": { "type": "string", "default": "#6b7280" },
+            "due_date": { "type": ["string", "null"], "format": "date-time" },
+            "created_at": { "type": "string", "format": "date-time" },
+            "updated_at": { "type": "string", "format": "date-time" },
+            "completed_at": {
+              "type": ["string", "null"],
+              "format": "date-time"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "estimated_hours": {
+                  "type": "number",
+                  "description": "Tự động tính từ created_at → due_date (giờ)"
+                },
+                "actual_hours": {
+                  "type": "number",
+                  "description": "Tự động tính từ created_at → completed_at (giờ)"
+                },
+                "complexity_level": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "required_skills": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "reviewer_wallet": { "type": "string" },
+                "quality_rating": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "feedback": { "type": "string" },
+                "contribution_weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "default": 1.0
+                },
+                "times_edited": { "type": "number", "default": 0 },
+                "verification_rejected_count": {
+                  "type": "number",
+                  "default": 0
+                }
+              },
+              "required": ["required_skills"]
+            }
+          },
+          "required": ["_id", "title", "status", "tags", "created_at"],
+          "oneOf": [
+            { "required": ["user_id", "wallet_address"] },
+            { "required": ["group_id"] }
+          ]
+        }
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": {
+                    "$cond": {
+                      "if": {
+                        "$gt": [{ "$size": { "$objectToArray": "$$ROOT" } }, 6]
+                      },
+                      "then": "$created_at",
+                      "else": "$$NOW"
+                    }
+                  },
+                  "updated_at": "$$NOW",
+                  "completed_at": {
+                    "$cond": {
+                      "if": { "$eq": ["$status", "completed"] },
+                      "then": "$$NOW",
+                      "else": "$completed_at"
+                    }
+                  },
+                  "is_completed": {
+                    "$cond": {
+                      "if": { "$eq": ["$status", "completed"] },
+                      "then": true,
+                      "else": false
+                    }
+                  },
+                  "color_code": {
+                    "$switch": {
+                      "branches": [
+                        {
+                          "case": { "$eq": ["$priority", "high"] },
+                          "then": "#ef4444"
+                        },
+                        {
+                          "case": { "$eq": ["$priority", "medium"] },
+                          "then": "#f59e0b"
+                        },
+                        {
+                          "case": { "$eq": ["$priority", "low"] },
+                          "then": "#10b981"
+                        }
+                      ],
+                      "default": "#6b7280"
+                    }
+                  },
+                  "metadata": {
+                    "$mergeObjects": [
+                      "$metadata",
+                      {
+                        "estimated_hours": {
+                          "$cond": {
+                            "if": {
+                              "$and": [
+                                { "$ne": ["$due_date", null] },
+                                { "$ne": ["$created_at", null] }
+                              ]
+                            },
+                            "then": {
+                              "$divide": [
+                                {
+                                  "$subtract": [
+                                    {
+                                      "$dateFromString": {
+                                        "dateString": "$due_date"
+                                      }
+                                    },
+                                    {
+                                      "$dateFromString": {
+                                        "dateString": "$created_at"
+                                      }
+                                    }
+                                  ]
+                                },
+                                3600000
+                              ]
+                            },
+                            "else": 0
+                          }
+                        },
+                        "actual_hours": {
+                          "$cond": {
+                            "if": {
+                              "$and": [
+                                { "$ne": ["$completed_at", null] },
+                                { "$ne": ["$created_at", null] }
+                              ]
+                            },
+                            "then": {
+                              "$divide": [
+                                {
+                                  "$subtract": [
+                                    {
+                                      "$dateFromString": {
+                                        "dateString": "$completed_at"
+                                      }
+                                    },
+                                    {
+                                      "$dateFromString": {
+                                        "dateString": "$created_at"
+                                      }
+                                    }
+                                  ]
+                                },
+                                3600000
+                              ]
+                            },
+                            "else": 0
+                          }
+                        },
+                        "times_edited": {
+                          "$cond": {
+                            "if": {
+                              "$gt": [
+                                { "$size": { "$objectToArray": "$$ROOT" } },
+                                10
+                              ]
+                            },
+                            "then": {
+                              "$add": [
+                                { "$ifNull": ["$metadata.times_edited", 0] },
+                                1
+                              ]
+                            },
+                            "else": { "$ifNull": ["$metadata.times_edited", 0] }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_tasks",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động tính estimated/actual hours, cập nhật times_edited, hỗ trợ cả task cá nhân & nhóm."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_task_verifications",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "TaskVerification",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "task_id": { "type": "string", "index": true },
+            "user_id": { "type": "string", "index": true },
+            "wallet_address": { "type": "string", "index": true },
+            "message": {
+              "type": "string",
+              "description": "Message được ký: 'I completed task {task_id} at {timestamp}'"
+            },
+            "signature": {
+              "type": "string",
+              "description": "Chữ ký ECDSA từ ví Metamask"
+            },
+            "verified_on_chain": { "type": "boolean", "default": false },
+            "tx_hash": { "type": "string", "nullable": true },
+            "verified_at": { "type": "string", "format": "date-time" }
+          },
+          "required": [
+            "_id",
+            "task_id",
+            "wallet_address",
+            "message",
+            "signature",
+            "verified_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "verify_999",
+            "task_id": "task_xyz789",
+            "user_id": "user_789xyz",
+            "wallet_address": "0x123abc...",
+            "message": "I completed task task_xyz789 at 2025-08-16T10:00:00Z",
+            "signature": "0xabc123def456...",
+            "verified_on_chain": false,
+            "tx_hash": null,
+            "verified_at": "2025-08-16T10:00:05Z"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "verified_at": { "$literal": "$$NOW" },
+                  "message": {
+                    "$concat": [
+                      "I completed task ",
+                      "$task_id",
+                      " at ",
+                      {
+                        "$dateToString": {
+                          "format": "%Y-%m-%dT%H:%M:%SZ",
+                          "date": "$$NOW"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_task_verifications",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Lưu chữ ký xác thực hoàn thành task. Có thể tích hợp với smart contract sau."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_audit_logs",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "user_id": { "type": "string" },
+            "wallet_address": { "type": "string" },
+            "action": {
+              "type": "string",
+              "enum": [
+                "login",
+                "create_task",
+                "update_task",
+                "delete_task",
+                "logout"
+              ]
+            },
+            "target_id": { "type": "string", "nullable": true },
+            "ip_address": { "type": "string" },
+            "user_agent": { "type": "string" },
+            "created_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  },
+
+  {
+    "_id": "collection_task_comments",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "TaskComment",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "task_id": { "type": "string", "index": true },
+            "user_id": { "type": "string", "index": true },
+            "wallet_address": { "type": "string", "index": true },
+            "content": { "type": "string", "minLength": 1, "maxLength": 2000 },
+            "replies_to_comment_id": { "type": "string", "nullable": true },
+            "created_at": { "type": "string", "format": "date-time" },
+            "updated_at": { "type": "string", "format": "date-time" },
+            "is_edited": { "type": "boolean", "default": false }
+          },
+          "required": [
+            "_id",
+            "task_id",
+            "user_id",
+            "wallet_address",
+            "content",
+            "created_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "comment_001",
+            "task_id": "task_xyz789",
+            "user_id": "user_789xyz",
+            "wallet_address": "0x123abc...",
+            "content": "Great progress! Please add unit tests.",
+            "replies_to_comment_id": null,
+            "created_at": "2025-09-10T10:00:00Z",
+            "updated_at": "2025-09-10T10:00:00Z",
+            "is_edited": false
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": { "$literal": "$$NOW" },
+                  "updated_at": { "$literal": "$$NOW" }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_task_comments",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động ghi nhận thời gian tạo và cập nhật bình luận."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_task_attachments",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "TaskAttachment",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "task_id": { "type": "string", "index": true },
+            "user_id": { "type": "string", "index": true },
+            "file_name": { "type": "string", "maxLength": 255 },
+            "file_url": { "type": "string", "format": "uri" },
+            "file_size_bytes": { "type": "number", "minimum": 0 },
+            "mime_type": { "type": "string" },
+            "uploaded_at": { "type": "string", "format": "date-time" }
+          },
+          "required": [
+            "_id",
+            "task_id",
+            "user_id",
+            "file_name",
+            "file_url",
+            "uploaded_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "attach_001",
+            "task_id": "task_xyz789",
+            "user_id": "user_789xyz",
+            "file_name": "design_mockup.png",
+            "file_url": "https://example.com/files/design_mockup.png",
+            "file_size_bytes": 102400,
+            "mime_type": "image/png",
+            "uploaded_at": "2025-09-10T11:00:00Z"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "uploaded_at": { "$literal": "$$NOW" }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_task_attachments",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động ghi nhận thời gian upload file."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_groups",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Group",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "group_id": { "type": "string", "index": true, "unique": true },
+            "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+            "description": { "type": "string", "maxLength": 500 },
+            "owner_wallet_address": { "type": "string", "index": true },
+            "created_at": { "type": "string", "format": "date-time" },
+            "updated_at": { "type": "string", "format": "date-time" },
+            "is_public": { "type": "boolean", "default": false },
+            "join_policy": {
+              "type": "string",
+              "enum": ["invite_only", "request_to_join", "open"],
+              "default": "invite_only"
+            }
+          },
+          "required": [
+            "_id",
+            "group_id",
+            "name",
+            "owner_wallet_address",
+            "created_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "group_001",
+            "group_id": "grp_naver_hackathon_2025",
+            "name": "NAVER Hackathon 2025 Team",
+            "description": "Team for NAVER Vietnam AI Hackathon 2025",
+            "owner_wallet_address": "0x123abc...",
+            "created_at": "2025-09-10T08:00:00Z",
+            "updated_at": "2025-09-10T08:00:00Z",
+            "is_public": false,
+            "join_policy": "invite_only"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": { "$literal": "$$NOW" },
+                  "updated_at": { "$literal": "$$NOW" },
+                  "group_id": {
+                    "$function": {
+                      "body": "function() { return 'grp_' + require('crypto').randomBytes(8).toString('hex'); }",
+                      "args": [],
+                      "lang": "js"
+                    }
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_groups",
+                  "on": "group_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động tạo group_id và ghi nhận thời gian tạo nhóm."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_group_members",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "GroupMember",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "group_id": { "type": "string", "index": true },
+            "user_id": { "type": "string", "index": true },
+            "wallet_address": { "type": "string", "index": true },
+            "role": {
+              "type": "string",
+              "enum": ["owner", "admin", "member", "guest"],
+              "default": "member"
+            },
+            "joined_at": { "type": "string", "format": "date-time" },
+            "last_active_at": { "type": "string", "format": "date-time" },
+            "permissions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Danh sách quyền: create_task, edit_task, delete_task, invite_member, ..."
+            }
+          },
+          "required": [
+            "_id",
+            "group_id",
+            "user_id",
+            "wallet_address",
+            "role",
+            "joined_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "member_001",
+            "group_id": "grp_naver_hackathon_2025",
+            "user_id": "user_789xyz",
+            "wallet_address": "0x123abc...",
+            "role": "admin",
+            "joined_at": "2025-09-10T09:00:00Z",
+            "last_active_at": "2025-09-10T10:00:00Z",
+            "permissions": ["create_task", "edit_task", "invite_member"]
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "joined_at": { "$literal": "$$NOW" },
+                  "last_active_at": { "$literal": "$$NOW" },
+                  "permissions": {
+                    "$switch": {
+                      "branches": [
+                        {
+                          "case": { "$eq": ["$role", "owner"] },
+                          "then": ["*"]
+                        },
+                        {
+                          "case": { "$eq": ["$role", "admin"] },
+                          "then": [
+                            "create_task",
+                            "edit_task",
+                            "delete_task",
+                            "invite_member"
+                          ]
+                        },
+                        {
+                          "case": { "$eq": ["$role", "member"] },
+                          "then": ["create_task", "edit_task"]
+                        },
+                        {
+                          "case": { "$eq": ["$role", "guest"] },
+                          "then": ["view_task"]
+                        }
+                      ],
+                      "default": ["view_task"]
+                    }
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_group_members",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động gán quyền dựa trên vai trò và ghi nhận thời gian tham gia."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_invitations",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Invitation",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "invitation_id": {
+              "type": "string",
+              "index": true,
+              "unique": true
+            },
+            "group_id": { "type": "string", "index": true },
+            "inviter_wallet_address": { "type": "string", "index": true },
+            "invitee_wallet_address": { "type": "string", "index": true },
+            "role": {
+              "type": "string",
+              "enum": ["owner", "admin", "member", "guest"],
+              "default": "member"
+            },
+            "invitation_link": { "type": "string", "format": "uri" },
+            "expires_at": { "type": "string", "format": "date-time" },
+            "used": { "type": "boolean", "default": false },
+            "used_at": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "signature": {
+              "type": "string",
+              "description": "Chữ ký của inviter để xác thực lời mời"
+            },
+            "created_at": { "type": "string", "format": "date-time" }
+          },
+          "required": [
+            "_id",
+            "invitation_id",
+            "group_id",
+            "inviter_wallet_address",
+            "invitee_wallet_address",
+            "role",
+            "invitation_link",
+            "expires_at",
+            "signature",
+            "created_at"
+          ]
+        },
+        "jsonSample": [
+          {
+            "_id": "invite_001",
+            "invitation_id": "inv_abc123",
+            "group_id": "grp_naver_hackathon_2025",
+            "inviter_wallet_address": "0x123abc...",
+            "invitee_wallet_address": "0x456def...",
+            "role": "member",
+            "invitation_link": "https://web3todo.app/join/inv_abc123",
+            "expires_at": "2025-09-17T09:00:00Z",
+            "used": false,
+            "used_at": null,
+            "signature": "0x789ghi...",
+            "created_at": "2025-09-10T10:00:00Z"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": { "$literal": "$$NOW" },
+                  "expires_at": {
+                    "$dateAdd": {
+                      "startDate": "$$NOW",
+                      "unit": "day",
+                      "amount": 7
+                    }
+                  },
+                  "invitation_id": {
+                    "$function": {
+                      "body": "function() { return 'inv_' + require('crypto').randomBytes(8).toString('hex'); }",
+                      "args": [],
+                      "lang": "js"
+                    }
+                  },
+                  "invitation_link": {
+                    "$concat": [
+                      "https://web3todo.app/join/",
+                      {
+                        "$function": {
+                          "body": "function() { return 'inv_' + require('crypto').randomBytes(8).toString('hex'); }",
+                          "args": [],
+                          "lang": "js"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_invitations",
+                  "on": "invitation_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo lời mời với link và chữ ký Web3 — đảm bảo chỉ người được mời mới có thể tham gia."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_announcements",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Announcement",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "content": { "type": "string", "maxLength": 2000 },
+            "type": {
+              "type": "string",
+              "enum": ["reminder", "event", "system", "course_tip"]
+            },
+            "audience": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "['all'] hoặc danh sách user_id / group_id"
+            },
+            "created_at": { "type": "string", "format": "date-time" },
+            "expires_at": { "type": "string", "format": "date-time" },
+            "read_by": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Danh sách user_id đã đọc"
+            }
+          },
+          "required": ["_id", "title", "content", "type", "created_at"]
+        },
+        "jsonSample": [
+          {
+            "_id": "announce_001",
+            "title": "Bạn còn 2 task deadline ngày mai",
+            "content": "Hãy hoàn thành để nâng Productivity Score",
+            "type": "reminder",
+            "audience": ["user_123", "user_456"],
+            "created_at": "2025-09-11T09:00:00Z",
+            "expires_at": "2025-09-12T09:00:00Z",
+            "read_by": ["user_123"]
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              { "$addFields": { "created_at": { "$literal": "$$NOW" } } },
+              {
+                "$merge": {
+                  "into": "collection_announcements",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo announcement mới hoặc cập nhật thông báo."
+          },
+          {
+            "pipeline": [
+              { "$match": { "expires_at": { "$lte": "$$NOW" } } },
+              {
+                "$merge": {
+                  "into": "collection_announcements",
+                  "whenMatched": "delete"
+                }
+              }
+            ],
+            "purpose": "Tự động xoá announcement đã hết hạn."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "collection_announcements",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Announcement",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "content": { "type": "string", "maxLength": 2000 },
+            "type": {
+              "type": "string",
+              "enum": ["reminder", "event", "system", "course_tip"]
+            },
+            "audience": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "['all'] hoặc danh sách user_id / group_id"
+            },
+            "created_at": { "type": "string", "format": "date-time" },
+            "expires_at": { "type": "string", "format": "date-time" },
+            "read_by": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Danh sách user_id đã đọc"
+            }
+          },
+          "required": ["_id", "title", "content", "type", "created_at"]
+        },
+        "jsonSample": [
+          {
+            "_id": "announce_001",
+            "title": "Bạn còn 2 task deadline ngày mai",
+            "content": "Hãy hoàn thành để nâng Productivity Score",
+            "type": "reminder",
+            "audience": ["user_123", "user_456"],
+            "created_at": "2025-09-11T09:00:00Z",
+            "expires_at": "2025-09-12T09:00:00Z",
+            "read_by": ["user_123"]
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              { "$addFields": { "created_at": { "$literal": "$$NOW" } } },
+              {
+                "$merge": {
+                  "into": "collection_announcements",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo announcement mới hoặc cập nhật thông báo."
+          },
+          {
+            "pipeline": [
+              { "$match": { "expires_at": { "$lte": "$$NOW" } } },
+              {
+                "$merge": {
+                  "into": "collection_announcements",
+                  "whenMatched": "delete"
+                }
+              }
+            ],
+            "purpose": "Tự động xoá announcement đã hết hạn."
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_id": "collection_courses",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Course",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "title": { "type": "string", "maxLength": 200 },
+            "description": { "type": "string", "maxLength": 2000 },
+            "mentor_wallet": { "type": "string" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "resources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "url": { "type": "string", "format": "uri" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["pdf", "video", "article"]
+                  }
+                },
+                "required": ["title", "url"]
+              }
+            },
+            "created_at": { "type": "string", "format": "date-time" }
+          },
+          "required": ["_id", "title", "mentor_wallet", "created_at"]
+        },
+        "jsonSample": [
+          {
+            "_id": "course_001",
+            "title": "Time Management 101",
+            "description": "Học cách chia task hiệu quả",
+            "mentor_wallet": "0xabc123...",
+            "tags": ["productivity", "students"],
+            "resources": [
+              {
+                "title": "Video intro",
+                "url": "https://youtube.com/xxx",
+                "type": "video"
+              }
+            ],
+            "created_at": "2025-09-10T10:00:00Z"
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              { "$addFields": { "created_at": { "$literal": "$$NOW" } } },
+              {
+                "$merge": {
+                  "into": "collection_courses",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo hoặc cập nhật mini-course / mentor tip."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "collection_forum_threads",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "ForumThread",
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "title": { "type": "string", "maxLength": 200 },
+            "content": { "type": "string", "maxLength": 5000 },
+            "user_id": { "type": "string" },
+            "wallet_address": { "type": "string" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "created_at": { "type": "string", "format": "date-time" },
+            "updated_at": { "type": "string", "format": "date-time" },
+            "replies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reply_id": { "type": "string" },
+                  "user_id": { "type": "string" },
+                  "wallet_address": { "type": "string" },
+                  "content": { "type": "string" },
+                  "created_at": { "type": "string", "format": "date-time" }
+                },
+                "required": ["reply_id", "user_id", "content", "created_at"]
+              }
+            }
+          },
+          "required": ["_id", "title", "user_id", "content", "created_at"]
+        },
+        "jsonSample": [
+          {
+            "_id": "thread_001",
+            "title": "Cách chia nhỏ task để dễ hoàn thành?",
+            "content": "Mọi người có tips nào không?",
+            "user_id": "user_123",
+            "wallet_address": "0x789abc...",
+            "tags": ["productivity"],
+            "created_at": "2025-09-11T08:00:00Z",
+            "updated_at": "2025-09-11T08:00:00Z",
+            "replies": [
+              {
+                "reply_id": "reply_001",
+                "user_id": "user_456",
+                "wallet_address": "0x456def...",
+                "content": "Nên chia theo deadline tuần",
+                "created_at": "2025-09-11T08:30:00Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "created_at": { "$literal": "$$NOW" },
+                  "updated_at": { "$literal": "$$NOW" }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_forum_threads",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tạo mới hoặc cập nhật thread."
+          }
+        ]
+      }
+    }
+  }
+]

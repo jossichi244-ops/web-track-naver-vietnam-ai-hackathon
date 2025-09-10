@@ -1,0 +1,114 @@
+:root {
+  --color-bg-dark: #011f0f;
+  --color-panel-dark: #022b17;
+  --color-border: #0ecf81;
+  --color-text-primary: #a4f9d6;
+  --color-text-secondary: #7ee8b3;
+  --color-accent: #0ecf81;
+  --color-accent-hover: #15e8a3;
+  --color-glow: rgba(14, 207, 129, 0.7);
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "Inter", sans-serif;
+}
+
+// --- 2. Animations (Hiệu ứng) ---
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--color-glow);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// --- 3. Main Layout (Bố cục chính) ---
+.profile-page-container {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  // min-height: 100vh;
+  padding: 2.5rem;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  // Responsive layout for larger screens
+  @media (min-width: 1024px) {
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: auto auto;
+    gap: 2.5rem;
+  }
+}
+
+.section-wrapper {
+  background: var(--color-panel-dark);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 12px rgba(14, 207, 129, 0.2);
+
+  // Animation on entry
+  animation: fade-in-up 0.8s ease-out forwards;
+
+  &:hover {
+    box-shadow: 0 0 20px rgba(14, 207, 129, 0.4);
+    transition: box-shadow 0.3s ease;
+  }
+}
+
+/* Specific component placements using grid area names or numbers */
+.profile-form-wrapper {
+  // Styles for the form container
+  @media (min-width: 1024px) {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    align-items: center;
+  }
+}
+
+.profile-overview-wrapper {
+  // Styles for the overview container
+  @media (min-width: 1024px) {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+}
+
+.dashboard-wrapper {
+  // Styles for the dashboard container
+  @media (min-width: 1024px) {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--color-glow);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+}

@@ -1,0 +1,88 @@
+// src/assets/styles/_group-card.scss
+
+.group-card {
+  background-color: var(--color-dark-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-card);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  // Hiệu ứng hover nổi bật
+  &:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-accent-neon);
+    box-shadow: 0 5px 20px rgba(160, 32, 240, 0.2),
+      0 0 30px rgba(160, 32, 240, 0.1);
+  }
+
+  .card-body {
+    .group-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .description {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border-subtle);
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-text-secondary);
+
+      .icon {
+        font-size: 1.1rem;
+        color: var(--color-accent-neon);
+      }
+      .info-text,
+      .info-text-address {
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      .info-text-address {
+        font-family: var(--font-family-mono);
+      }
+    }
+
+    .view-button {
+      margin-left: auto;
+      background-color: var(--color-button-bg);
+      color: var(--color-text-primary);
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition-fast);
+
+      &:hover {
+        // background-color: lighten($color: #3c2a6d, $amount: 10%);
+        box-shadow: 0 0 15px var(--color-accent-glow);
+        transform: translateY(-2px);
+      }
+      .arrow-icon {
+        transition: transform 0.3s ease;
+      }
+      &:hover .arrow-icon {
+        transform: translateX(5px);
+      }
+    }
+  }
+}

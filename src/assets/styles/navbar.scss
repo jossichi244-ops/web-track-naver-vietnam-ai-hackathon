@@ -1,0 +1,233 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+
+:root {
+  --color-bg-dark: #0a1f14;
+  --color-panel-dark: #112b21;
+  --color-border: #0ecf81;
+  --color-text-primary: #a4f9d6;
+  --color-text-secondary: #7ee8b3;
+  --color-accent: #0ecf81;
+  --color-accent-hover: #15e8a3;
+  --color-glow: rgba(14, 207, 129, 0.7);
+
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 5px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--color-glow);
+  }
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100vw;
+  height: 100px;
+  background: var(--color-panel-dark);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  z-index: 999;
+  box-shadow: 0 0 10px rgba(14, 207, 129, 0.15);
+
+  .navbar-container {
+    top: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    height: 100px;
+  }
+
+  .logo {
+    top: 0;
+    height: 80%;
+    margin-right: 50px;
+    margin-left: 50px;
+    margin-top: 20px;
+
+    .logo-img {
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+      transition: height 0.3s ease;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    top: 0;
+    .nav-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
+
+      &.active,
+      &:hover {
+        color: var(--color-accent);
+        text-shadow: 0 0 8px var(--color-glow);
+        transform: translateY(-2px);
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 0;
+        height: 2px;
+        background-color: var(--color-accent);
+        transition: width 0.3s ease;
+        border-radius: 1px;
+      }
+
+      &:hover::after,
+      &.active::after {
+        width: 100%;
+      }
+    }
+  }
+
+  .wallet-status {
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    .wallet-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      color: var(--color-text-primary);
+      font-weight: 600;
+      cursor: default;
+      user-select: text;
+      text-shadow: 0 0 5px var(--color-glow);
+    }
+    .address {
+      font-weight: 600;
+    }
+    .logout-button {
+      background: transparent;
+      border: 1px solid #0ecf81;
+      color: #0ecf81;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+
+      &:hover {
+        background-color: #0ecf81;
+        color: #011f0f;
+      }
+    }
+
+    .connect-wallet-button {
+      background: var(--color-accent);
+      padding: 0.4rem 1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      color: var(--color-bg-dark);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 0 10px var(--color-glow);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        background: var(--color-accent-hover);
+        box-shadow: 0 0 20px var(--color-glow);
+      }
+    }
+  }
+
+  /* Hamburger button (hidden on desktop) */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 28px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      width: 100%;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 5px var(--color-glow);
+    }
+
+    &.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    &.open span:nth-child(2) {
+      opacity: 0;
+    }
+    &.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+  }
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+  .navbar {
+    .navbar-container {
+      position: relative;
+    }
+
+    .nav-links {
+      position: absolute;
+      // top: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-panel-dark);
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      gap: 1rem;
+      border-top: 1px solid var(--color-border);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+
+      &.open {
+        max-height: 300px; // đủ để hiển thị link
+        box-shadow: 0 0 15px var(--color-glow);
+      }
+
+      .nav-link {
+        font-size: 1.2rem;
+        padding: 0.5rem 0;
+      }
+    }
+    .logo-img {
+      height: 28px; // nhỏ hơn trên mobile
+    }
+    .wallet-status {
+      display: none; // ẩn ví trên mobile menu để giảm clutter
+    }
+
+    .hamburger {
+      display: flex;
+    }
+  }
+}

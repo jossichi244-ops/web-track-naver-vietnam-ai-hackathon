@@ -1,0 +1,117 @@
+/*
+  ==============================================================
+  SCSS cho Dashboard: Tái thiết kế theo phong cách Web3 Cyber-Modern.
+  Sử dụng các khối nổi, ánh sáng neon, và hiệu ứng chuyển động
+  để tạo ra một trải nghiệm người dùng sống động và hiện đại.
+  ==============================================================
+*/
+
+// --- 1. Biến (Variables) ---
+$primary-color: #00ffc0; // Neon Green
+$secondary-color: #4a90e2; // Electric Blue
+$background-color: #0d1a2d; // Dark Blue
+$card-bg: #162a43; // Lighter Dark Blue for cards
+$text-color-light: #e0e6ef;
+$border-color: rgba($primary-color, 0.2);
+
+// --- 2. Mixins (Hàm tái sử dụng) ---
+@mixin glow-effect($color) {
+  box-shadow: 0 0 10px rgba($color, 0.6), 0 0 20px rgba($color, 0.3);
+}
+
+@mixin transition-ease {
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// --- 3. Keyframes (Animations) ---
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: rgba($primary-color, 0.2);
+  }
+  50% {
+    border-color: rgba($primary-color, 0.6);
+  }
+}
+
+// --- 4. Main Styles (Styles chính) ---
+.dashboard-container {
+  padding: 2.5rem;
+  font-family: "Inter", sans-serif;
+  color: $text-color-light;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.dashboard-card {
+  border: 1px solid $border-color;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  @include transition-ease;
+  animation: fade-in-up 0.8s ease-out forwards;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+      0 0 25px rgba($primary-color, 0.3);
+  }
+
+  &.calendar-card {
+    grid-column: 1 / -1; // Chiếm toàn bộ chiều rộng trên mobile
+    @media (min-width: 1024px) {
+      grid-column: span 2; // Chiếm 2 cột trên desktop
+    }
+  }
+
+  &.tasklist-card {
+    grid-column: 1 / -1; // Luôn chiếm toàn bộ chiều rộng
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary-color;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba($primary-color, 0.5);
+    span {
+      display: inline-block;
+      margin-right: 0.5rem;
+      animation: pulse-border 2s infinite;
+
+      &.calendar {
+        color: #f59e0b;
+      } // Vàng
+      &.group {
+        color: $secondary-color;
+      } // Xanh dương
+      &.task {
+        color: #10b981;
+      } // Xanh lá cây
+    }
+  }
+}

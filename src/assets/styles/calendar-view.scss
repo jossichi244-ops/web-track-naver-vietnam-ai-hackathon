@@ -1,0 +1,145 @@
+/*
+  ==============================================================
+  SCSS cho CalendarView: Tái thiết kế theo phong cách Web3.
+  Thay thế giao diện mặc định bằng các khối dữ liệu neon,
+  tạo cảm giác về sự sống động và bảo mật.
+  ==============================================================
+*/
+
+// --- 1. Biến (Variables) ---
+$primary-color: #00ffc0; // Neon Green
+$secondary-color: #4a90e2; // Electric Blue
+$background-color: #0d1a2d; // Dark Blue
+$card-bg: #162a43; // Lighter Dark Blue for cards
+$text-color-light: #e0e6ef;
+$text-color-muted: #8a96a9;
+$border-color: rgba($primary-color, 0.2);
+
+// --- 2. Keyframes (Animations) ---
+@keyframes neon-pulse {
+  0% {
+    box-shadow: 0 0 5px rgba($primary-color, 0.7),
+      inset 0 0 5px rgba($primary-color, 0.7);
+    border-color: rgba($primary-color, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba($primary-color, 1),
+      inset 0 0 10px rgba($primary-color, 1);
+    border-color: rgba($primary-color, 1);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba($primary-color, 0.7),
+      inset 0 0 5px rgba($primary-color, 0.7);
+    border-color: rgba($primary-color, 0.4);
+  }
+}
+
+// --- 3. Main Styles (Styles chính) ---
+.react-calendar {
+  width: 100%;
+  max-width: 100%;
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: 1.5rem;
+  font-family: "Inter", sans-serif;
+  line-height: 1.125em;
+  padding: 1.5rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.react-calendar--doubleView {
+  width: 700px;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  margin-bottom: 1rem;
+  height: 44px;
+  .react-calendar__navigation__label,
+  .react-calendar__navigation__arrow {
+    background: none;
+    border: none;
+    color: $text-color-light;
+    font-weight: bold;
+    font-size: 1.25rem;
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.react-calendar__tile {
+  background: none;
+  border: none;
+  color: $text-color-light;
+  padding: 1rem 0;
+  text-align: center;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+
+  &--now {
+    background: rgba($secondary-color, 0.2);
+    border: 1px solid $secondary-color;
+    color: $secondary-color;
+  }
+
+  &--active {
+    background-color: $primary-color;
+    color: $background-color;
+    font-weight: bold;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+      color: $background-color;
+    }
+  }
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.8em;
+  abbr {
+    text-decoration: none;
+    color: $text-color-muted;
+  }
+}
+
+.react-calendar__month-view__days {
+  .react-calendar__tile--has-tasks {
+    background-color: transparent; // Để không bị conflict
+    border: 1px solid rgba($primary-color, 0.5);
+    color: $primary-color;
+    position: relative;
+    overflow: hidden;
+    animation: neon-pulse 3s infinite ease-in-out;
+
+    // Thêm một chấm nhỏ để nổi bật hơn
+    &::after {
+      content: "•";
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: $primary-color;
+      font-size: 2rem;
+      line-height: 0;
+      text-shadow: 0 0 5px $primary-color;
+      animation: neon-pulse 3s infinite ease-in-out;
+    }
+  }
+}
+
+.react-calendar__tile--range,
+.react-calendar__tile--rangeStart,
+.react-calendar__tile--rangeEnd {
+  background: rgba($primary-color, 0.1);
+  color: $primary-color;
+  border-radius: 0;
+}
