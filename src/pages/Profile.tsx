@@ -3,6 +3,7 @@ import { useUserProfile } from "../hooks/useUser";
 import ProfileForm from "../components/ProfileForm";
 import ProfileOverview from "../components/ProfileOverview";
 import Dashboard from "../components/Dashboard";
+import "../assets/styles/profile.scss";
 export default function Profile() {
   const { user } = useAuth();
   const { profile, updateProfile, updatePreferences, loading, error } =

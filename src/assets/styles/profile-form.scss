@@ -23,7 +23,6 @@
   box-shadow: 0 0 12px rgba(14, 207, 129, 0.2);
   font-family: var(--font-mono);
   color: var(--color-text-primary);
-
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -144,7 +143,8 @@
 @media (max-width: 480px) {
   .profile-form {
     padding: 1.5rem 1.8rem;
-    max-width: 100%;
+    // max-width: 100%;
+    // justify-content: space-between;
 
     h2 {
       font-size: 1.5rem;

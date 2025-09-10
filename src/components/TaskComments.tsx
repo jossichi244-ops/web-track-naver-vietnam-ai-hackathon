@@ -13,7 +13,7 @@ export default function TaskComments({ taskId }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function load() {
-    if (!user) return;
+    if (!user || !user.access_token) return;
     setLoading(true);
     try {
       const data = await fetchComments(taskId, user.access_token);
@@ -31,6 +31,7 @@ export default function TaskComments({ taskId }: Props) {
   }, [taskId]);
 
   async function handleSubmit(e: React.FormEvent) {
+    if (!user || !user.access_token) return;
     e.preventDefault();
     if (!newComment.trim() || !user) return;
     try {

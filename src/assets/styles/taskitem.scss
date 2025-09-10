@@ -140,16 +140,16 @@
   &.mark-done {
     background-color: #0ecf81;
     color: white;
-    &:hover {
-      background-color: darken(#0ecf81, 10%);
-    }
+    // &:hover {
+    //   background-color: darken(#0ecf81, 10%);
+    // }
   }
   &.delete {
     background-color: #240202;
     color: white;
-    &:hover {
-      background-color: darken(#dc3545, 10%);
-    }
+    // &:hover {
+    //   background-color: darken(#dc3545, 10%);
+    // }
   }
 }
 .task-comments-section {
