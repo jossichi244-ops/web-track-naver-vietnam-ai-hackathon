@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+import { API_BASE } from "../constants/api";
 
 export async function request<T>(
   path: string,

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import type { User } from "../types";
 import { useAuthContext } from "./useAuthContext";
-
+import { API_BASE } from "../constants/api";
 export function useAuth() {
   const [account, setAccount] = useState<string | null>(null);
   // const [user, setUser] = useState<User | null>(null);
@@ -13,7 +13,7 @@ export function useAuth() {
       alert("MetaMask not found");
       return;
     }
-    const provider = new ethers.BrowserProvider(window.ethereum!); // ✅ Đã sửa
+    const provider = new ethers.BrowserProvider(window.ethereum!);
     const accounts = await provider.send("eth_requestAccounts", []);
     setAccount(accounts[0]);
   };
@@ -22,7 +22,7 @@ export function useAuth() {
     if (!account) return;
 
     try {
-      const res = await fetch("http://localhost:8000/auth/challenge", {
+      const res = await fetch(`${API_BASE}/auth/challenge`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ wallet_address: account }),
@@ -46,7 +46,7 @@ export function useAuth() {
       const signer = await provider.getSigner();
       const signature = await signer.signMessage(challenge); // ✅ Giờ challenge chắc chắn là string
 
-      const res2 = await fetch("http://localhost:8000/auth/verify", {
+      const res2 = await fetch(`${API_BASE}/auth/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ wallet_address: account, signature }),
