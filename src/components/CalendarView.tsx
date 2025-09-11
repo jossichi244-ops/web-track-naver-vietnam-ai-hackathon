@@ -3,7 +3,8 @@ import Calendar, { type CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useState } from "react";
 import "../assets/styles/calendar-view.scss";
-import type { Task } from "../types"; // 👈 Import từ types
+import type { Task } from "../types";
+import Swal from "sweetalert2";
 
 type Value = Date | null;
 
@@ -29,9 +30,19 @@ export default function CalendarView({ tasks = [] }: Props) {
     const key = formatDateKey(date);
     const dayTasks = tasksByDate[key] || [];
     if (dayTasks.length) {
-      alert(
-        `Tasks on ${key}:\n${dayTasks.map((t) => "- " + t.title).join("\n")}`
-      );
+      Swal.fire({
+        title: `Tasks on ${key}`,
+        html: dayTasks.map((t) => `<p>• ${t.title}</p>`).join(""),
+        icon: "info",
+        confirmButtonText: "Close",
+        background: "#0b4224ff",
+        color: "#e6e6e6ff",
+        backdrop: `
+          rgba(0,0,0,0.4)
+          left top
+          no-repeat
+        `,
+      });
     }
   };
 

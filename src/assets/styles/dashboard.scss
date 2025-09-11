@@ -1,117 +1,123 @@
-/*
-  ==============================================================
-  SCSS cho Dashboard: Tái thiết kế theo phong cách Web3 Cyber-Modern.
-  Sử dụng các khối nổi, ánh sáng neon, và hiệu ứng chuyển động
-  để tạo ra một trải nghiệm người dùng sống động và hiện đại.
-  ==============================================================
-*/
+/* dashboard.scss */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap");
 
-// --- 1. Biến (Variables) ---
-$primary-color: #00ffc0; // Neon Green
-$secondary-color: #4a90e2; // Electric Blue
-$background-color: #0d1a2d; // Dark Blue
-$card-bg: #162a43; // Lighter Dark Blue for cards
-$text-color-light: #e0e6ef;
-$border-color: rgba($primary-color, 0.2);
+// --- Variables ---
+$primary-bg: #0d1117;
+$card-bg: #161b22;
+$border-color: #30363d;
+$neon-blue: #00e5ff;
+$neon-purple: #8e2de2;
+$text-light: #c9d1d9;
+$text-subtle: #8b949e;
 
-// --- 2. Mixins (Hàm tái sử dụng) ---
-@mixin glow-effect($color) {
-  box-shadow: 0 0 10px rgba($color, 0.6), 0 0 20px rgba($color, 0.3);
-}
-
-@mixin transition-ease {
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-// --- 3. Keyframes (Animations) ---
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-border {
-  0%,
-  100% {
-    border-color: rgba($primary-color, 0.2);
+// --- Keyframes ---
+@keyframes neon-pulse {
+  0% {
+    box-shadow: 0 0 5px $neon-blue, 0 0 10px $neon-blue;
   }
   50% {
-    border-color: rgba($primary-color, 0.6);
+    box-shadow: 0 0 15px $neon-blue, 0 0 25px $neon-blue;
+  }
+  100% {
+    box-shadow: 0 0 5px $neon-blue, 0 0 10px $neon-blue;
   }
 }
 
-// --- 4. Main Styles (Styles chính) ---
-.dashboard-container {
-  padding: 2.5rem;
-  font-family: "Inter", sans-serif;
-  color: $text-color-light;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+@keyframes flash-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }
 
-.dashboard-card {
-  border: 1px solid $border-color;
-  border-radius: 1.5rem;
+.dashboard-cyb-container {
   padding: 2rem;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  font-family: "Poppins", sans-serif;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: $text-light;
+  min-height: 100vh;
+  border-radius: 20px;
+}
+
+.dashboard-grid-cyb {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.dashboard-header-cyb {
+  margin-bottom: 2rem;
+}
+
+// --- Cards ---
+.dashboard-card-cyb {
+  background-color: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
-
-  @include transition-ease;
-  animation: fade-in-up 0.8s ease-out forwards;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
-      0 0 25px rgba($primary-color, 0.3);
-  }
-
-  &.calendar-card {
-    grid-column: 1 / -1; // Chiếm toàn bộ chiều rộng trên mobile
-    @media (min-width: 1024px) {
-      grid-column: span 2; // Chiếm 2 cột trên desktop
-    }
-  }
-
-  &.tasklist-card {
-    grid-column: 1 / -1; // Luôn chiếm toàn bộ chiều rộng
+    transform: translateY(-5px);
+    border-color: $neon-blue;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
   }
 }
 
-.card-header {
+.card-header-cyb {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 1.5rem;
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: $primary-color;
-    letter-spacing: 1px;
-    text-shadow: 0 0 8px rgba($primary-color, 0.5);
-    span {
-      display: inline-block;
-      margin-right: 0.5rem;
-      animation: pulse-border 2s infinite;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 1rem;
+}
 
-      &.calendar {
-        color: #f59e0b;
-      } // Vàng
-      &.group {
-        color: $secondary-color;
-      } // Xanh dương
-      &.task {
-        color: #10b981;
-      } // Xanh lá cây
-    }
+.card-title-cyb {
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: $text-light;
+  text-shadow: 0 0 5px $neon-blue;
+}
+
+// --- Icons & Glow Effects ---
+.icon-cyb {
+  filter: drop-shadow(0 0 5px);
+}
+
+.neon-blue-glow {
+  color: $neon-blue;
+  text-shadow: 0 0 5px $neon-blue, 0 0 10px $neon-blue;
+}
+
+.neon-purple-glow {
+  color: $neon-purple;
+  text-shadow: 0 0 5px $neon-purple, 0 0 10px $neon-purple;
+}
+
+// --- Responsive Design ---
+@media (max-width: 768px) {
+  .dashboard-cyb-container {
+    padding: 1rem;
+  }
+
+  .dashboard-grid-cyb {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card-title-cyb {
+    font-size: 1.25rem;
   }
 }

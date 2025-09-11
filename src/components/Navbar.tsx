@@ -40,6 +40,7 @@ export default function Navbar() {
     { path: "/task", label: "Task", icon: <ListChecks size={20} /> },
     { path: "/groups", label: "Groups Page", icon: <Users size={20} /> },
     { path: "/my-groups", label: "My Groups", icon: <Folder size={20} /> },
+    { path: "/challenges", label: "Challenges", icon: <Zap size={20} /> },
   ];
 
   return (
@@ -73,10 +74,11 @@ export default function Navbar() {
               className={`nav-link-cyb ${
                 location.pathname === path ? "active" : ""
               }`}
-              onClick={() => setMenuOpen(false)}
-              title={label}>
-              <div className="icon-wrapper">{icon}</div>
-              <span className="label-text">{label}</span>
+              onClick={() => setMenuOpen(false)}>
+              <div className="icon-wrapper icon-wrapper-cyb">
+                {icon}
+                <span className="label-text">{label}</span>
+              </div>
             </Link>
           ))}
         </div>

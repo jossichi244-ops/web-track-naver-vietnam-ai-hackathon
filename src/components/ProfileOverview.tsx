@@ -12,10 +12,10 @@ interface Props {
 
 export default function ProfileOverview({
   profile,
-  onUpdatePreferences,
-}: Props) {
+}: // onUpdatePreferences,
+Props) {
   const summary = profile.profile_summary;
-  const prefs = profile.preferences;
+  // const prefs = profile.preferences;
 
   // Dữ liệu Pie chart
   const data = [
@@ -26,16 +26,16 @@ export default function ProfileOverview({
 
   const COLORS = ["#10b981", "#3b82f6", "#f59e0b"];
 
-  const handleTogglePush = async () => {
-    try {
-      await onUpdatePreferences({
-        web_push_enabled: !prefs.web_push_enabled,
-      });
-    } catch (err) {
-      console.error("Toggle push failed:", err);
-      alert("Failed to update preferences.");
-    }
-  };
+  // const handleTogglePush = async () => {
+  //   try {
+  //     await onUpdatePreferences({
+  //       web_push_enabled: !prefs.web_push_enabled,
+  //     });
+  //   } catch (err) {
+  //     console.error("Toggle push failed:", err);
+  //     alert("Failed to update preferences.");
+  //   }
+  // };
 
   return (
     <div className="profile-overview-container">
@@ -77,7 +77,7 @@ export default function ProfileOverview({
       </div>
 
       {/* Web Push Toggle */}
-      <div className="toggle-section">
+      {/* <div className="toggle-section">
         <span className="toggle-label">Web Push Notifications</span>
         <button
           onClick={handleTogglePush}
@@ -86,7 +86,7 @@ export default function ProfileOverview({
           }`}>
           {prefs.web_push_enabled ? "ENABLED" : "DISABLED"}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

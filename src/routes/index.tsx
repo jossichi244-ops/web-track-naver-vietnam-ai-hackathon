@@ -8,6 +8,7 @@ import GroupsPage from "../pages/GroupsPage";
 import GroupDetailPage from "../pages/GroupDetailPage";
 import MyGroupsPage from "../pages/MyGroupsPage";
 import GroupTasksPage from "../pages/GroupTasksPage";
+import CommunityChallengePage from "../pages/CommunityChallengePage";
 
 export default function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export default function AppRoutes() {
         <Route path="/my-groups" element={<MyGroupsPage />} />
         <Route path="/groups/:groupId" element={<GroupDetailPage />} />
         <Route path="/groups/:groupId/tasks" element={<GroupTasksPage />} />
+        <Route path="/challenges" element={<CommunityChallengePage />} />
       </Routes>
     </BrowserRouter>
   );

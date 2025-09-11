@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { UserProfile } from "../types";
 import "../assets/styles/profile-form.scss";
+// import ShareChallengeForm from "./ShareChallengeForm";
 
 interface Props {
   profile: UserProfile;
@@ -73,9 +74,7 @@ export default function ProfileForm({
   return (
     <form onSubmit={handleSaveProfile} className="profile-form">
       <h2>Edit Profile</h2>
-
       {message && <div className="message">{message}</div>}
-
       <div>
         <label htmlFor="displayName">Display Name</label>
         <input
@@ -88,7 +87,6 @@ export default function ProfileForm({
           disabled={saving}
         />
       </div>
-
       <div>
         <label htmlFor="avatarUrl">Avatar URL</label>
         <input
@@ -108,15 +106,12 @@ export default function ProfileForm({
           />
         )}
       </div>
-
       <button type="submit" disabled={saving}>
         {saving ? "Saving..." : "Save Profile"}
       </button>
-
       <hr />
-
-      <h3>Preferences</h3>
-      <div>
+      {/* <h3>Preferences</h3> */}
+      {/* <div>
         <label htmlFor="theme">Theme</label>
         <select
           id="theme"
@@ -129,9 +124,8 @@ export default function ProfileForm({
           <option value="dark">Dark</option>
           <option value="auto">Auto</option>
         </select>
-      </div>
-
-      <div className="checkbox-label">
+      </div> */}
+      {/* <div className="checkbox-label">
         <input
           id="notifications"
           type="checkbox"
@@ -140,11 +134,10 @@ export default function ProfileForm({
           disabled={saving}
         />
         <label htmlFor="notifications">Enable Notifications</label>
-      </div>
-
+      </div> */}
       <button type="button" onClick={handleSavePreferences} disabled={saving}>
         {saving ? "Saving..." : "Save Preferences"}
-      </button>
+      </button>{" "}
     </form>
   );
 }

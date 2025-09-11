@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import type { Task } from "../types";
 import "../assets/styles/notification-card.scss";
+import DeadlineReminder from "./DeadlineReminder";
 
 interface Props {
   tasks: Task[];
@@ -9,13 +10,11 @@ interface Props {
 export default function NotificationCard({ tasks }: Props) {
   const [open, setOpen] = useState(false);
 
-  // Lấy các task chưa hoàn thành
   const pendingTasks = useMemo(
     () => tasks.filter((t) => !t.is_completed && t.status !== "completed"),
     [tasks]
   );
 
-  // Convert thành notifications
   const notifications = useMemo(
     () =>
       pendingTasks.map((t) => {
@@ -64,9 +63,10 @@ export default function NotificationCard({ tasks }: Props) {
           </ul>
           {notifications.length === 0 && (
             <p className="empty-text">Không có thông báo nào</p>
-          )}
+          )}{" "}
         </div>
       )}
+      <DeadlineReminder tasks={tasks} />
     </div>
   );
 }

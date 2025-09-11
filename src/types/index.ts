@@ -136,3 +136,20 @@ export interface TaskComment {
   updated_at: string;
   is_edited: boolean;
 }
+export type Challenge = {
+  _id: string;
+  title?: string;
+  description?: string;
+  challenge_url: string;
+  tags?: string[];
+  wallet_address: string;
+  user_id: string;
+  shared_at: string;
+};
+
+export type ChallengeCreate = {
+  title?: string;
+  description?: string;
+  challenge_url: string;
+  tags?: string[];
+};

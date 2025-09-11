@@ -145,11 +145,45 @@
                 "last_updated_summary"
               ]
             },
+            "major": {
+              "type": "string",
+              "description": "Ngành học (VD: Khoa học Máy tính, Kinh tế, Luật...)"
+            },
+            "year": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Năm học (1, 2, 3, 4, 5)"
+            },
+            "typical_week_schedule": {
+              "type": "object",
+              "description": "Lịch học cố định trong tuần (dùng để gợi ý thời gian rảnh)",
+              "properties": {
+                "monday": { "type": "array", "items": { "type": "string" } },
+                "tuesday": { "type": "array", "items": { "type": "string" } },
+                "wednessday": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "saturday": { "type": "array", "items": { "type": "string" } },
+                "sunday": { "type": "array", "items": { "type": "string" } }
+              }
+            },
             "skill_tag": { "type": "string", "index": true },
             "proficiency_level": {
               "type": "number",
               "minimum": 1,
               "maximum": 5
+            },
+            "preferred_study_time": {
+              "type": "string",
+              "enum": ["morning", "afternoon", "evening", "night"],
+              "description": "Khung giờ học tập hiệu quả nhất"
+            },
+            "academic_goals": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Mục tiêu học tập trong học kỳ (VD: GPA > 3.5, thi đỗ chứng chỉ X...)"
             },
             "last_used_at": { "type": "string", "format": "date-time" },
             "verified_by_tasks": {
@@ -1303,7 +1337,7 @@
             "_id": { "type": "string" },
             "title": { "type": "string", "maxLength": 200 },
             "description": { "type": "string", "maxLength": 2000 },
-            "mentor_wallet": { "type": "string" },
+            "wallet_address": { "type": "string" },
             "tags": { "type": "array", "items": { "type": "string" } },
             "resources": {
               "type": "array",
@@ -1322,14 +1356,14 @@
             },
             "created_at": { "type": "string", "format": "date-time" }
           },
-          "required": ["_id", "title", "mentor_wallet", "created_at"]
+          "required": ["_id", "title", "wallet_address", "created_at"]
         },
         "jsonSample": [
           {
             "_id": "course_001",
             "title": "Time Management 101",
             "description": "Học cách chia task hiệu quả",
-            "mentor_wallet": "0xabc123...",
+            "wallet_address": "0xabc123...",
             "tags": ["productivity", "students"],
             "resources": [
               {
@@ -1442,6 +1476,99 @@
               }
             ],
             "purpose": "Tạo mới hoặc cập nhật thread."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "collection_community_challenges",
+    "public": {
+      "node_data": {
+        "jsonSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "CommunityChallengeShare",
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "ID duy nhất của bản ghi chia sẻ này."
+            },
+            "user_id": {
+              "type": "string",
+              "index": true,
+              "description": "ID người dùng đã chia sẻ cuộc thi này."
+            },
+            "wallet_address": {
+              "type": "string",
+              "index": true,
+              "description": "Địa chỉ ví của người chia sẻ."
+            },
+            "challenge_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL đến trang web cuộc thi / hackathon.",
+              "examples": [
+                "https://hackathon.naver.com/2025",
+                "https://devpost.com/software/my-project"
+              ]
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 150,
+              "description": "Tên cuộc thi (có thể lấy từ metadata của URL hoặc do người dùng nhập)."
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "Mô tả ngắn gọn hoặc cảm nhận cá nhân về cuộc thi."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Các thẻ để phân loại (VD: #hackathon, #AI, #blockchain, #university)."
+            },
+            "shared_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Thời gian chia sẻ."
+            }
+          },
+          "required": [
+            "_id",
+            "user_id",
+            "wallet_address",
+            "challenge_url",
+            "shared_at"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "private": {
+      "node_function": {
+        "edge": [
+          {
+            "pipeline": [
+              {
+                "$addFields": {
+                  "shared_at": {
+                    "$literal": "$$NOW"
+                  }
+                }
+              },
+              {
+                "$merge": {
+                  "into": "collection_community_challenges",
+                  "on": "_id",
+                  "whenMatched": "replace",
+                  "whenNotMatched": "insert"
+                }
+              }
+            ],
+            "purpose": "Tự động ghi nhận thời gian chia sẻ khi người dùng submit form."
           }
         ]
       }

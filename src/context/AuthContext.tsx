@@ -1,12 +1,11 @@
 // src/context/AuthContext.tsx
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { User } from "../types";
+import type { User, UserProfile } from "../types";
 import { AuthContext } from "./AuthContextInstance";
 
-// 👇 Export interface để file khác dùng
 export interface AuthContextType {
-  user: User | null;
+  user: (User & { profile?: UserProfile }) | null;
   setUser: (user: User | null) => void;
   logout: () => void;
 }
