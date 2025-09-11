@@ -8,6 +8,7 @@ $neon-blue: #00e5ff;
 $neon-purple: #8e2de2;
 $text-light: #c9d1d9;
 $text-subtle: #8b949e;
+$neon-blue: #00e5ff;
 
 // --- Keyframes ---
 @keyframes neon-glow {
@@ -126,7 +127,7 @@ $text-subtle: #8b949e;
 
   &:hover {
     text-decoration: underline;
-    color: lighten($neon-blue, 10%);
+    // color: lighten($neon-blue, 10%);
     .link-icon-cyb {
       transform: rotate(45deg);
     }

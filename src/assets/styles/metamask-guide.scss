@@ -120,7 +120,7 @@ $border-color: rgba($primary-color, 0.2);
 
     &:hover {
       box-shadow: 0 0 20px rgba($primary-color, 0.9);
-      background-color: lighten($primary-color, 5%);
+      // background-color: lighten($primary-color, 5%);
     }
   }
 }
