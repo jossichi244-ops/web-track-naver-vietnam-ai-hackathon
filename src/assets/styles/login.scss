@@ -435,3 +435,176 @@
     box-shadow: 0 0 10px #0ecf81, 0 0 20px #0ecf81;
   }
 }
+
+.guide-button {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9rem;
+  border-radius: 999px;
+
+  &:hover {
+    background: rgba(var(--color-accent), 0.1);
+    transform: translateY(-2px);
+  }
+}
+.web3-landing-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 1rem; // Thêm padding cho mobile
+  box-sizing: border-box; // Đảm bảo padding không gây tràn
+
+  // Các hiệu ứng ánh sáng
+  &::before,
+  &::after {
+    // Giảm kích thước và blur cho mobile
+    width: 150px;
+    height: 150px;
+    filter: blur(60px);
+  }
+}
+
+.floating-block {
+  width: 100px;
+  height: 100px;
+}
+
+.content-container {
+  height: auto; // Thay đổi từ 40vh thành auto để nội dung không bị cắt
+  width: 95%; // Dùng % thay vì max-width cố định
+  max-width: 500px; // Giới hạn kích thước tối đa trên desktop
+  padding: 1.5rem; // Giảm padding cho mobile
+  gap: 1.25rem; // Giảm khoảng cách
+}
+
+.title {
+  font-size: clamp(2rem, 8vw, 4rem); // Dùng clamp để font tự co giãn
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 3vw, 1.25rem);
+}
+
+// --- Nút bấm và các thành phần khác ---
+.action-button {
+  width: 100%; // Đảm bảo nút chiếm hết chiều rộng trên mobile
+  max-width: 300px; // Giới hạn kích thước trên desktop
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9rem;
+
+  .button.x svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.user-info-card {
+  width: 100%;
+  padding: 1rem 1.5rem;
+}
+
+// --- Media Query cho Tablet và Desktop (min-width: 768px) ---
+@media (min-width: 768px) {
+  .web3-landing-page {
+    padding: 2rem;
+    &::before,
+    &::after {
+      width: 200px;
+      height: 200px;
+      filter: blur(80px);
+    }
+  }
+
+  .floating-block {
+    width: 150px;
+    height: 150px;
+  }
+
+  .content-container {
+    height: 40vh;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+
+  .title {
+    font-size: clamp(2rem, 5vw, 4rem);
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .action-button {
+    width: auto;
+    max-width: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+
+    .button.x svg {
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  .user-info-card {
+    width: auto;
+    padding: 1.5rem 2rem;
+  }
+}
+
+// --- Media Query cho Popup (Modal) ---
+.modal-overlay {
+  // Không cần thay đổi nhiều, vì nó đã chiếm hết màn hình
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 540px;
+  padding: 1.5rem; // Giảm padding cho mobile
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  ol,
+  ul {
+    font-size: 0.9rem;
+  }
+
+  .modal-actions {
+    flex-direction: column; // Xếp nút theo chiều dọc trên mobile
+    gap: 0.8rem;
+  }
+
+  .cancel-button,
+  .confirm-button {
+    width: 100%; // Chiếm hết chiều rộng
+  }
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+    padding: 2rem 2.5rem;
+
+    h2 {
+      font-size: 1.4rem;
+    }
+
+    ol,
+    ul {
+      font-size: 0.95rem;
+    }
+
+    .modal-actions {
+      flex-direction: row; // Xếp nút theo chiều ngang
+      justify-content: flex-end;
+    }
+  }
+}

@@ -3,32 +3,19 @@ import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import { shortenAddress } from "../utils/helpers";
 import "../assets/styles/login.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import MetaMaskGuide from "../components/MetaMaskGuide";
 export default function Home() {
   const { account, user, connectWallet, login } = useAuth();
   const [showGuide, setShowGuide] = useState(false);
+  const [showMetaMaskGuide, setShowMetaMaskGuide] = useState(false);
 
-  // const containerVariants = {
-  //   hidden: { opacity: 0, y: -20 },
-  //   visible: {
-  //     opacity: 1,
-  //     y: 0,
-  //     transition: {
-  //       type: "spring",
-  //       stiffness: 100,
-  //       damping: 10,
-  //       delayChildren: 0.3,
-  //       staggerChildren: 0.2,
-  //     },
-  //   },
-  //   active: {
-  //     backgroundColor: "#f00",
-  //   },
-  //   inactive: {
-  //     backgroundColor: "#fff",
-  //     transition: { duration: 2 },
-  //   },
-  // };
+  useEffect(() => {
+    if (typeof window.ethereum === "undefined") {
+      setShowMetaMaskGuide(true);
+    }
+  }, []);
+
   const variants = {
     active: {
       backgroundColor: "#f00",
@@ -65,12 +52,17 @@ export default function Home() {
           Web3 Task Manager
         </motion.h1>
         <motion.p className="subtitle" variants={itemVariants}>
-          Quản lý công việc phi tập trung, on-chain.
+          Decentralized task management, on-chain.
         </motion.p>
-
         {!account && (
           <motion.button
-            onClick={connectWallet}
+            onClick={() => {
+              if (typeof window.ethereum === "undefined") {
+                setShowMetaMaskGuide(true);
+              } else {
+                connectWallet();
+              }
+            }}
             className="action-button connect-wallet"
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}
@@ -88,7 +80,6 @@ export default function Home() {
             </button>
           </motion.button>
         )}
-
         {account && !user && (
           <motion.button
             onClick={() => setShowGuide(true)}
@@ -102,39 +93,41 @@ export default function Home() {
         {showGuide && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h2>Cách Đăng Nhập An Toàn Bằng Ví Điện Tử</h2>
+              <h2>How to Log In Securely Using E-Wallet</h2>
               <ol>
                 <li>
-                  <strong>Bước 1:</strong> Bấm vào nút <code>Challenge</code> để
-                  yêu cầu xác thực từ ví.
+                  <strong>Step 1:</strong> Click the <code>Challenge</code>
+                  button to request verification from the wallet.
                 </li>
                 <li>
-                  <strong>Bước 2:</strong> Ví sẽ hiện thông báo yêu cầu bạn ký
-                  thông điệp.
+                  <strong>Step 2:</strong> The wallet will display a
+                  notification asking you to sign the message.
                 </li>
                 <li>
-                  <strong>Bước 3:</strong> Chấp nhận ký (Sign) – không tốn phí.
+                  <strong>Step 3:</strong> Accept to sign – no fee.
                 </li>
                 <li>
-                  <strong>Bước 4:</strong> Sau khi ký, bạn sẽ được đăng nhập
-                  ngay.
+                  <strong>Step 4:</strong> After signing, you will be logged in
+                  immediately.
                 </li>
               </ol>
 
               <p>
-                <strong>Tại sao lại dùng cách này?</strong>
+                <strong>Why use this method?</strong>
               </p>
               <ul>
-                <li>Siêu bảo mật – không cần mật khẩu.</li>
-                <li>Riêng tư tuyệt đối – chỉ ví của bạn biết bạn là ai.</li>
-                <li>Siêu nhanh – đăng nhập trong vài giây.</li>
+                <li>Super secure – no password needed.</li>
+                <li>
+                  Absolutely private – only your wallet knows who you are.
+                </li>
+                <li>Super fast – log in within seconds.</li>
               </ul>
 
               <div className="modal-actions">
                 <button
                   className="cancel-button"
                   onClick={() => setShowGuide(false)}>
-                  Đóng
+                  Close
                 </button>
                 <button
                   className="confirm-button"
@@ -142,13 +135,12 @@ export default function Home() {
                     setShowGuide(false);
                     login(); // Gọi hàm đăng nhập sau khi user hiểu
                   }}>
-                  Tôi đã hiểu, tiếp tục
+                  I understand, continue.
                 </button>
               </div>
             </div>
           </div>
         )}
-
         {user && (
           <motion.div
             className="user-info-card"
@@ -157,18 +149,39 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}>
             <p className="user-info-text">
-              Chào mừng, ví của bạn:{" "}
+              Welcome, your wallet:
               <span className="highlight-text">
                 {shortenAddress(user.wallet_address)}
               </span>
             </p>
             <p className="user-info-text">
-              ID người dùng:{" "}
-              <span className="highlight-text">{user.user_id}</span>
+              User ID: <span className="highlight-text">{user.user_id}</span>
             </p>
           </motion.div>
         )}
-      </motion.div>
+        {showMetaMaskGuide && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <MetaMaskGuide />
+              <div className="modal-actions">
+                <button
+                  className="cancel-button"
+                  onClick={() => setShowMetaMaskGuide(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </motion.div>{" "}
+      <motion.button
+        onClick={() => setShowMetaMaskGuide(true)}
+        className=" guide-button"
+        variants={itemVariants}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}>
+        Guide to connecting the wallet
+      </motion.button>
     </div>
   );
 }

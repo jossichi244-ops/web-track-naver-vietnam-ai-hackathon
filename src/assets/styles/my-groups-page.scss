@@ -1,0 +1,185 @@
+/* my-groups-page.scss */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap");
+
+// --- Variables ---
+$primary-bg: #0d1117;
+$secondary-bg: #161b22;
+$card-bg: #1f252d;
+$border-color: #30363d;
+$neon-blue: #00e5ff;
+$neon-purple: #8e2de2;
+$text-light: #c9d1d9;
+$text-subtle: #8b949e;
+
+// --- Keyframes ---
+@keyframes neon-glow {
+  0% {
+    box-shadow: 0 0 5px $neon-blue, 0 0 10px $neon-blue;
+  }
+  50% {
+    box-shadow: 0 0 15px $neon-blue, 0 0 25px $neon-blue;
+  }
+  100% {
+    box-shadow: 0 0 5px $neon-blue, 0 0 10px $neon-blue;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// --- Base Styles ---
+// .page-container-cyb {
+//   padding: 2rem;
+//   font-family: "Poppins", sans-serif;
+//   color: $text-light;
+//   //   background-color: $primary-bg;
+//   min-height: 100vh;
+// }
+
+// --- Header ---
+.page-header-cyb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title-cyb {
+  padding: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 0 0 8px $neon-blue;
+  position: relative;
+  &::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, $neon-blue, $neon-purple);
+    margin-top: 0.5rem;
+  }
+}
+
+// --- Buttons ---
+.create-group-btn-cyb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: $neon-blue;
+  border: 1px solid $neon-blue;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px $neon-blue;
+
+  &:hover {
+    background-color: $neon-blue;
+    color: $primary-bg;
+    box-shadow: 0 0 15px $neon-blue;
+    transform: translateY(-2px);
+  }
+}
+
+// --- States (Loading, Empty) ---
+.loading-state-cyb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  font-size: 1.25rem;
+  gap: 1rem;
+  color: $text-subtle;
+
+  .spinner-cyb {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 229, 255, 0.2);
+    border-top-color: $neon-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+.empty-state-cyb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 50vh;
+  padding: 2rem;
+  background-color: $secondary-bg;
+  border: 1px dashed $border-color;
+  border-radius: 12px;
+
+  .empty-state-icon {
+    color: $text-subtle;
+    margin-bottom: 1rem;
+    svg {
+      stroke: $text-subtle;
+    }
+  }
+
+  .empty-state-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $text-light;
+  }
+
+  .empty-state-text {
+    color: $text-subtle;
+    margin-bottom: 2rem;
+    max-width: 400px;
+  }
+}
+
+// --- Groups List ---
+.groups-list-cyb {
+  display: grid;
+  padding: 2rem;
+  //   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+// --- Responsive Design ---
+@media (max-width: 768px) {
+  .page-container-cyb {
+    padding: 1rem;
+  }
+
+  .page-header-cyb {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-title-cyb {
+    font-size: 2rem;
+  }
+
+  .create-group-btn-cyb {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .groups-list-cyb {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-state-cyb {
+    padding: 1rem;
+  }
+}
